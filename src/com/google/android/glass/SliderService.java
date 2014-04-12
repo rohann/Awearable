@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.android.glass.sample.stopwatch;
+package com.google.android.glass;
 
 import com.google.android.glass.timeline.LiveCard;
 import com.google.android.glass.timeline.LiveCard.PublishMode;
@@ -29,12 +29,10 @@ import android.util.Log;
 /**
  * Service owning the LiveCard living in the timeline.
  */
-public class StopwatchService extends Service {
+public class SliderService extends Service {
 
     private static final String TAG = "StopwatchService";
     private static final String LIVE_CARD_TAG = "stopwatch";
-
-   // private ChronometerDrawer mCallback;
 
     private TimelineManager mTimelineManager;
     private LiveCard mLiveCard;
@@ -56,10 +54,6 @@ public class StopwatchService extends Service {
             Log.d(TAG, "Publishing LiveCard");
             mLiveCard = mTimelineManager.createLiveCard(LIVE_CARD_TAG);
 
-            // Keep track of the callback to remove it before unpublishing.
-        //    mCallback = new ChronometerDrawer(this);
-         //   mLiveCard.setDirectRenderingEnabled(true).getSurfaceHolder().addCallback(mCallback);
-
             Intent menuIntent = new Intent(this, MenuActivity.class);
             menuIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             mLiveCard.setAction(PendingIntent.getActivity(this, 0, menuIntent, 0));
@@ -77,9 +71,6 @@ public class StopwatchService extends Service {
     public void onDestroy() {
         if (mLiveCard != null && mLiveCard.isPublished()) {
             Log.d(TAG, "Unpublishing LiveCard");
-          /*  if (mCallback != null) {
-                mLiveCard.getSurfaceHolder().removeCallback(mCallback);
-            }*/
             mLiveCard.unpublish();
             mLiveCard = null;
         }
