@@ -14,13 +14,9 @@
      limitations under the License.
 -->
 
-<resources>
-    <string name="app_name">Awearable</string>
-    <string name="start_awearable">start end</string>
-    <string name="stop">Stop</string>
-    <string name="next">Next Event</string>
-    <string name="text">Record Text</string>
-    <string name="picture">Take a Picture</string>
-    <string name="video">Record a Video</string>
-    <string name="livecard_content">Welcome to Awearable</string>
-</resources>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/picture"
+        android:title="@string/picture"
+        android:icon="@drawable/ic_picture" />
+</menu>

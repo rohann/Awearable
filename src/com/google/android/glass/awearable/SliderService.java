@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package com.google.android.glass;
+package com.google.android.glass.awearable;
 
+import com.google.android.glass.awearable.R;
 import com.google.android.glass.timeline.LiveCard;
 import com.google.android.glass.timeline.LiveCard.PublishMode;
 import com.google.android.glass.timeline.TimelineManager;
 
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.RemoteViews;
 
 /**
  * Service owning the LiveCard living in the timeline.
@@ -36,7 +39,7 @@ public class SliderService extends Service {
 
     private TimelineManager mTimelineManager;
     private LiveCard mLiveCard;
-
+    private int number=0;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -50,20 +53,8 @@ public class SliderService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (mLiveCard == null) {
-            Log.d(TAG, "Publishing LiveCard");
-            mLiveCard = mTimelineManager.createLiveCard(LIVE_CARD_TAG);
-
-            Intent menuIntent = new Intent(this, MenuActivity.class);
-            menuIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            mLiveCard.setAction(PendingIntent.getActivity(this, 0, menuIntent, 0));
-
-            mLiveCard.publish(PublishMode.REVEAL);
-            Log.d(TAG, "Done publishing LiveCard");
-        } else {
-            // TODO(alainv): Jump to the LiveCard when API is available.
-        }
-
+    	number++;
+    	updateCard("Event"+number,this);
         return START_STICKY;
     }
 
@@ -75,5 +66,40 @@ public class SliderService extends Service {
             mLiveCard = null;
         }
         super.onDestroy();
+    }
+    
+    public void publishCard(Context context){
+   	 Log.d(TAG,"publishCard() called.");
+   		 mLiveCard = mTimelineManager.createLiveCard(LIVE_CARD_TAG);
+   		 
+   		 RemoteViews remoteviews=new RemoteViews(context.getPackageName(), R.layout.livecard);//left to check
+   		 mLiveCard.setViews(remoteviews);
+   		 
+   		 Intent intent = new Intent(context,MenuActivity.class);
+   		 mLiveCard.setAction(PendingIntent.getActivity(context,0, intent,0));
+   		 mLiveCard.publish(LiveCard.PublishMode.REVEAL);
+   }
+    
+    public void updateCard(String string, Context context){
+    	if(mLiveCard==null){
+    		publishCard(context);
+    	}
+    	else{
+
+    		RemoteViews remoteviews = new RemoteViews(context.getPackageName(),R.layout.livecard); // Defining a view. We need to give some text to the view. And it has to be the address.
+    		remoteviews.setCharSequence(R.id.livecard_content, "setText", string);//Changing the text to the updated text from the argument.
+    		mLiveCard.setViews(remoteviews); 
+    		
+    		Intent intent = new Intent(context, MenuActivity.class);
+    		mLiveCard.setAction(PendingIntent.getActivity(context, 0, intent, 0));
+    		
+    		if(! mLiveCard.isPublished()){
+    			mLiveCard.publish(LiveCard.PublishMode.REVEAL);
+    		}
+    		else{
+    			Log.d(TAG,"liveCard not published");
+    		}
+    		
+    	}
     }
 }

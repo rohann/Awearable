@@ -1,5 +1,5 @@
 /** Automatically generated file. DO NOT MODIFY */
-package com.google.android.glass;
+package com.google.android.glass.awearable;
 
 public final class BuildConfig {
     public final static boolean DEBUG = true;
